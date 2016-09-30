@@ -6,9 +6,9 @@ from flask import Flask, render_template, request
 
 
 app = Flask(__name__)
-server = Server(host='0.0.0.0', port= 5000)
+#server = Server(host='0.0.0.0', port= 5000)
 manager = Manager(app)
-manager.add_command("runserver", Server())
+manager.add_command("runserver", Server(host='0.0.0.0', port=5000))
 boostrap = Bootstrap(app)
 
 
