@@ -1,7 +1,7 @@
 
 import RPi.GPIO as GPIO
-from flask.ext.script import Manager
-from flask.ext.bootstrap import Bootstrap
+from flask_script import Manager
+from flask_bootstrap import Bootstrap
 from flask import Flask, render_template, request
 
 
