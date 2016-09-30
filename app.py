@@ -1,13 +1,14 @@
 
 import RPi.GPIO as GPIO
-from flask_script import Manager
+from flask_script import Manager, Server
 from flask_bootstrap import Bootstrap
 from flask import Flask, render_template, request
 
 
 app = Flask(__name__)
-
+server = Server(host='0.0.0.0', port= 5000)
 manager = Manager(app)
+manager.add_command("runserver", Server())
 boostrap = Bootstrap(app)
 
 
