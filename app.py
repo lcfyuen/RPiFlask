@@ -15,8 +15,10 @@ GPIO.setmode(GPIO.BCM)
 
 # Create a dictionary called pins to store the pin number, name, and pin state:
 pins = {
-   23 : {'name' : 'Relay1', 'state' : GPIO.LOW},
-   24 : {'name' : 'Relay2', 'state' : GPIO.LOW}
+   23 : {'name' : 'Relay1', 'state' : GPIO.LOW, 'count': 0},
+   24 : {'name' : 'Relay2', 'state' : GPIO.LOW, 'count': 0},
+   25 : {'name' : 'Relay3', 'state' : GPIO.LOW, 'count': 0},
+
    }
 
 # Set each pin as an output and make it low:
@@ -49,6 +51,10 @@ def action(changePin, action):
       GPIO.output(changePin, GPIO.HIGH)
       # Save the status message to be passed into the template:
       message = "Turned " + deviceName + " on."
+
+      #Increment cycle count
+      pins[changePin]['count'] += 1
+
    if action == "off":
       GPIO.output(changePin, GPIO.LOW)
       message = "Turned " + deviceName + " off."
