@@ -1,11 +1,11 @@
 import threading
 import RPi.GPIO as GPIO
-
+import time
 
 
 
 class TestThread(threading.Thread):
-	def __init__(self):
+    def __init__(self):
 		"""
 		Initialize self. variables
 		Start deckel object to check constantly for lid opening
@@ -23,22 +23,19 @@ class TestThread(threading.Thread):
 		   25 : {'name' : 'Relay3', 'state' : GPIO.LOW, 'count': 0},
 
 		   }
-
 		# Create a flag for test state
-
 		self.state = False
 
 		# Set each pin as an output and make it low:
 		for pin in self.pins:
-		   GPIO.setup(pin, GPIO.OUT)
-		   GPIO.output(pin, GPIO.LOW)
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, GPIO.LOW)
 
 
-	def update(self):
-
-		# read current statea of GPIO pins and update dictionary
-		for pin in self.pins:
-			self.pins[pin]['state'] = GPIO.input(pin)
+    def update(self):
+        # read current statea of GPIO pins and update dictionary
+        for pin in self.pins:
+            self.pins[pin]['state'] = GPIO.input(pin)
 
 	def toggle_pin(self,changePin, action):
 
@@ -53,21 +50,34 @@ class TestThread(threading.Thread):
 			# Save the status message to be passed into the template:
 			message = "Turned " + deviceName + " on."
 
-		#Increment cycle count
-		self.pins[changePin]['count'] += 1
+			#Increment cycle count
+			self.pins[changePin]['count'] += 1
 
 		if action == "off":
 			GPIO.output(changePin, GPIO.LOW)
 			message = "Turned " + deviceName + " off."
 
+    def run(self):
 
-	def write(self,pathfile,data,initial=False):
-		"""pass candy tracking data and datetime to the database"""
-		with open(pathfile, 'a') as f:
-			writer = csv.writer(f)
-			writer.writerow(data)
-		if initial:
-			self.df = pd.DataFrame(columns = data)
+        while True:
+            if self.state == True:
+
+                for pin in self.pins:
+                    self.toggle_pin(pin, 'on')
+                    time.sleep(1)
+                    self.toggle_pin(pin, 'off')
+                    time.sleep(1)
+            else:
+                pass
+
+
+	# def write(self,pathfile,data,initial=False):
+	# 	"""pass candy tracking data and datetime to the database"""
+	# 	with open(pathfile, 'a') as f:
+	# 		writer = csv.writer(f)
+	# 		writer.writerow(data)
+	# 	if initial:
+	# 		self.df = pd.DataFrame(columns = data)
 
 	# def log(self):
 	# 	print "Open Count:", self.open_count,

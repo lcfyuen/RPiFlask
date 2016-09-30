@@ -44,6 +44,44 @@ def action(changePin, action):
 
    return render_template('index.html', **templateData)
 
+@app.route("/run")
+def run():
+
+   # For each pin, read the pin state and store it in the pins dictionary:
+   test.update()
+
+   test.state = True
+   # Start thread
+   test.start()
+
+   # Put the pin dictionary into the template data dictionary:
+   templateData = {
+      'pins' : test.pins,
+      'test_state' : test.state
+      }
+   # Pass the template data into the template main.html and return it to the user
+   return render_template('index.html', **templateData)
+
+
+@app.route("/stop")
+def stop():
+  # For each pin, read the pin state and store it in the pins dictionary:
+   test.update()
+
+   test.state = False
+   # Start thread
+   test.start()
+
+   # Put the pin dictionary into the template data dictionary:
+   templateData = {
+      'pins' : test.pins,
+      'test_state' : test.state
+      }
+   # Pass the template data into the template main.html and return it to the user
+   return render_template('index.html', **templateData)
+
+
+
 if __name__ == "__main__":
    
    manager.run()

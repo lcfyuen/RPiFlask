@@ -11,15 +11,30 @@
    {% for pin in pins %}
    <h2>{{ pins[pin].name }}
    {% if pins[pin].state == true %}
-      is currently <strong>on</strong></h3><div class="row"><div class="col-md-2">
-      <h3> Count: {{ pins[pin].count}}
-      <a href="/{{pin}}/off" class="btn btn-block btn-lg btn-default" role="button">Turn off</a></div></div>
+        is currently <strong>on</strong></h3><div class="row"><div class="col-md-2">
+        <h3> Count: {{ pins[pin].count}}
+        {% if test_state == false %}
+        <a href="/{{pin}}/off" class="btn btn-block btn-lg btn-default" role="button">Turn off</a></div></div>
+        {% else %}
+        <a class ="btn btn-block btn-lg disabled" role="button">Test Running</a></div></div>
+        {% endif %}
    {% else %}
-      is currently <strong>off</strong></h2><div class="row"><div class="col-md-2">
-      <h3> Count: {{ pins[pin].count}}
-      <a href="/{{pin}}/on" class="btn btn-block btn-lg btn-primary" role="button">Turn on</a></div></div>
+        is currently <strong>off</strong></h2><div class="row"><div class="col-md-2">
+        <h3> Count: {{ pins[pin].count}}
+        {% if test_state == false %}
+        <a href="/{{pin}}/on" class="btn btn-block btn-lg btn-primary" role="button">Turn on</a></div></div>
+        {% else %}
+        <a href="#" class ="btn btn-block btn-lg disabled" role="button">Test Running</a></div></div>
+        {% endif %}
+
    {% endif %}
    {% endfor %}
+    {% if test_state == false %}
+    <a href="/run" class="btn btn-block btn-lg btn-success" role="button">Run Test</a></div></div>
+    {% else %}
+    <a href="/stop" class ="btn btn-block btn-lg btn-danger" role="button">Stop Test</a></div></div>
+    {% endif %}
+
 </div>
 
 
