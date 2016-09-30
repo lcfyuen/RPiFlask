@@ -1,7 +1,15 @@
 
 import RPi.GPIO as GPIO
+from flask.ext.script import Manager
+from flask.ext.bootstrap import Bootstrap
 from flask import Flask, render_template, request
+
+
 app = Flask(__name__)
+
+manager = Manager(app)
+boostrap = Bootstrap(app)
+
 
 GPIO.setmode(GPIO.BCM)
 
@@ -54,7 +62,8 @@ def action(changePin, action):
       'pins' : pins
    }
 
-   return render_template('main.html', **templateData)
+   return render_template('index.html', **templateData)
 
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', port=80, debug=True)
+   
+   manager.run()
