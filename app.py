@@ -51,8 +51,7 @@ def run():
    test.update()
 
    test.state = True
-   # Start thread
-   test.start()
+
 
    # Put the pin dictionary into the template data dictionary:
    templateData = {
@@ -69,8 +68,6 @@ def stop():
    test.update()
 
    test.state = False
-   # Start thread
-   test.start()
 
    # Put the pin dictionary into the template data dictionary:
    templateData = {
@@ -85,3 +82,4 @@ def stop():
 if __name__ == "__main__":
    
    manager.run()
+   test.start()
