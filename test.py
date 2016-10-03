@@ -15,14 +15,23 @@ class TestThread(threading.Thread):
         threading.Thread.__init__(self, args=(self.condition,))
         self.setDaemon(True)
 
+        reverse = 1
+
+        if not reverse:
+            self.off_state = GPIO.LOW
+            self.on_state = GPIO.HIGH
+        else:
+            self.off_state = GPIO.HIGH
+            self.on_state = GPIO.LOW
+
 
         GPIO.setmode(GPIO.BCM)
 
         # Create a dictionary called pins to store the pin number, name, and pin state:
         self.pins = {
-           23 : {'name' : 'Relay1', 'state' : GPIO.LOW, 'count': 0},
-           24 : {'name' : 'Relay2', 'state' : GPIO.LOW, 'count': 0},
-           25 : {'name' : 'Relay3', 'state' : GPIO.LOW, 'count': 0},
+           23 : {'name' : 'Relay1', 'state' : self.off_state, 'count': 0},
+           24 : {'name' : 'Relay2', 'state' : self.off_state, 'count': 0},
+           25 : {'name' : 'Relay3', 'state' : self.off_state, 'count': 0},
 
         }
             # Create a flag for test state
@@ -34,7 +43,7 @@ class TestThread(threading.Thread):
             # Set each pin as an output and make it low:
         for pin in self.pins:
                 GPIO.setup(pin, GPIO.OUT)
-                GPIO.output(pin, GPIO.LOW)
+                GPIO.output(pin, off_state)
 
 
     def update(self):
@@ -51,7 +60,7 @@ class TestThread(threading.Thread):
         # If the action part of the URL is "on," execute the code indented below:
         if action == "on":
             # Set the pin high:
-            GPIO.output(changePin, GPIO.HIGH)
+            GPIO.output(changePin, self.on_state)
             # Save the status message to be passed into the template:
             message = "Turned " + deviceName + " on."
 
@@ -59,7 +68,7 @@ class TestThread(threading.Thread):
             self.pins[changePin]['count'] += 1
 
         if action == "off":
-            GPIO.output(changePin, GPIO.LOW)
+            GPIO.output(changePin, self.off_state)
             message = "Turned " + deviceName + " off."
 
 
