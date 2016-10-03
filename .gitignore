@@ -1,0 +1,14 @@
+.DS_Store
+*.pyc
+*.xls
+*.xlsx
+*.csv
+*.pkl
+*.egg
+/docs/generated/
+/docs/_build/
+/docs/build/
+/docs/_build/html/
+/docs/Modulelist.rst
+/build/
+/hackathon.egg-info/
