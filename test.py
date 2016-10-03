@@ -7,29 +7,34 @@ import time
 class TestThread(threading.Thread):
     def __init__(self):
         """
-	Initialize self. variables
-	Start deckel object to check constantly for lid opening
-	"""
-	threading.Thread.__init__(self)
-	self.setDaemon(True)
+        Initialize self. variables
+        Start deckel object to check constantly for lid opening
+        """
+        self.condition = threading.Condition()
+
+        threading.Thread.__init__(self, args=(self.condition,))
+        self.setDaemon(True)
 
 
-	GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BCM)
 
-	# Create a dictionary called pins to store the pin number, name, and pin state:
-	self.pins = {
-	   23 : {'name' : 'Relay1', 'state' : GPIO.LOW, 'count': 0},
-	   24 : {'name' : 'Relay2', 'state' : GPIO.LOW, 'count': 0},
-	   25 : {'name' : 'Relay3', 'state' : GPIO.LOW, 'count': 0},
+        # Create a dictionary called pins to store the pin number, name, and pin state:
+        self.pins = {
+           23 : {'name' : 'Relay1', 'state' : GPIO.LOW, 'count': 0},
+           24 : {'name' : 'Relay2', 'state' : GPIO.LOW, 'count': 0},
+           25 : {'name' : 'Relay3', 'state' : GPIO.LOW, 'count': 0},
 
-	}
-		# Create a flag for test state
-	self.state = False
+        }
+            # Create a flag for test state
+        self.state = False
 
-		# Set each pin as an output and make it low:
-	for pin in self.pins:
-            GPIO.setup(pin, GPIO.OUT)
-            GPIO.output(pin, GPIO.LOW)
+        # thread started
+        self.running = False
+
+            # Set each pin as an output and make it low:
+        for pin in self.pins:
+                GPIO.setup(pin, GPIO.OUT)
+                GPIO.output(pin, GPIO.LOW)
 
 
     def update(self):
@@ -39,36 +44,42 @@ class TestThread(threading.Thread):
 
     def toggle_pin(self,changePin, action):
 
-	# Convert the pin from the URL into an integer:
-	changePin = int(changePin)
-	# Get the device name for the pin being changed:
-	deviceName = self.pins[changePin]['name']
-	# If the action part of the URL is "on," execute the code indented below:
-	if action == "on":
-	    # Set the pin high:
-  	    GPIO.output(changePin, GPIO.HIGH)
-	    # Save the status message to be passed into the template:
-	    message = "Turned " + deviceName + " on."
+        # Convert the pin from the URL into an integer:
+        changePin = int(changePin)
+        # Get the device name for the pin being changed:
+        deviceName = self.pins[changePin]['name']
+        # If the action part of the URL is "on," execute the code indented below:
+        if action == "on":
+            # Set the pin high:
+            GPIO.output(changePin, GPIO.HIGH)
+            # Save the status message to be passed into the template:
+            message = "Turned " + deviceName + " on."
 
-	    #Increment cycle count
-	    self.pins[changePin]['count'] += 1
+            #Increment cycle count
+            self.pins[changePin]['count'] += 1
 
-	if action == "off":
-	    GPIO.output(changePin, GPIO.LOW)
-	    message = "Turned " + deviceName + " off."
+        if action == "off":
+            GPIO.output(changePin, GPIO.LOW)
+            message = "Turned " + deviceName + " off."
+
+
+    def wait(self):
+
+        self.condition.wait()
+
+
+    def resume(self):
+
+        self.condition.notifyAll()
 
     def run(self):
-
-        while True:
-            if self.state == True:
-
-                for pin in self.pins:
-                    self.toggle_pin(pin, 'on')
-                    time.sleep(1)
-                    self.toggle_pin(pin, 'off')
-                    time.sleep(1)
-            else:
-                pass
+        self.running = True
+        while self.state == True:
+            for pin in self.pins:
+                self.toggle_pin(pin, 'on')
+                time.sleep(1)
+                self.toggle_pin(pin, 'off')
+                time.sleep(1)
 
 
 	# def write(self,pathfile,data,initial=False):

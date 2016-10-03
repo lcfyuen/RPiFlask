@@ -51,7 +51,11 @@ def run():
    test.update()
 
    test.state = True
-   test.start()
+
+   if test.running == True:
+      test.resume()
+   else:
+      test.start()
 
    # Put the pin dictionary into the template data dictionary:
    templateData = {
@@ -68,6 +72,7 @@ def stop():
    test.update()
 
    test.state = False
+   test.wait()
 
    # Put the pin dictionary into the template data dictionary:
    templateData = {
