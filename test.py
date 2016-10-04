@@ -15,9 +15,9 @@ class TestThread(threading.Thread):
         threading.Thread.__init__(self, args=(self.condition,))
         self.setDaemon(True)
 
-        reverse = 1
+        self.reverse = 1
 
-        if not reverse:
+        if not self.reverse:
             self.off_state = GPIO.LOW
             self.on_state = GPIO.HIGH
         else:
@@ -29,9 +29,9 @@ class TestThread(threading.Thread):
 
         # Create a dictionary called pins to store the pin number, name, and pin state:
         self.pins = {
-           23 : {'name' : 'Relay1', 'state' : self.off_state, 'count': 0},
-           24 : {'name' : 'Relay2', 'state' : self.off_state, 'count': 0},
-           25 : {'name' : 'Relay3', 'state' : self.off_state, 'count': 0},
+           23 : {'name' : 'Relay1', 'state' : 0, 'count': 0},
+           24 : {'name' : 'Relay2', 'state' : 0, 'count': 0},
+           25 : {'name' : 'Relay3', 'state' : 0, 'count': 0},
 
         }
             # Create a flag for test state
@@ -43,13 +43,18 @@ class TestThread(threading.Thread):
             # Set each pin as an output and make it low:
         for pin in self.pins:
                 GPIO.setup(pin, GPIO.OUT)
-                GPIO.output(pin, off_state)
+                GPIO.output(pin, self.off_state)
 
 
     def update(self):
         # read current statea of GPIO pins and update dictionary
         for pin in self.pins:
-            self.pins[pin]['state'] = GPIO.input(pin)
+
+            if not self.reverse:
+
+                self.pins[pin]['state'] = GPIO.input(pin)
+            else:
+                self.pins[pin]['state'] = not GPIO.input(pin)
 
     def toggle_pin(self,changePin, action):
 
